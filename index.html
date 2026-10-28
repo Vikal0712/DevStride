@@ -48,6 +48,7 @@ dialog{background:#121a2d;color:var(--text);border:1px solid var(--border);borde
 .auth-brand h1{font-size:21px;letter-spacing:-.5px;margin:0}.auth-brand p{margin:3px 0 0;color:#93a2bd;font-size:12px}
 .auth-eyebrow{color:#55d6be;text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:1.8px}.auth-card h2{font-size:25px;letter-spacing:-.7px;margin:8px 0}.auth-desc{font-size:13px;color:#a3b0c8;line-height:1.6;margin:0 0 22px}
 .auth-label{display:block;font-size:12px;color:#c2cce0;margin:14px 0 7px}.auth-input{display:block;width:100%;background:#0b1220!important;color:#eef3ff!important;border:1px solid #34425f!important;border-radius:11px;padding:12px 13px!important}.auth-btn{width:100%;margin-top:17px;padding:12px!important;border:0!important;border-radius:11px!important;background:linear-gradient(135deg,#8b9cff,#6979eb)!important;color:white!important;font-weight:750}.auth-error{min-height:18px;margin-top:11px;color:#ff9ca9;font-size:12px}.auth-warning{border:1px solid #51462f;background:#30291c;color:#e9d5a2;padding:11px 12px;border-radius:11px;font-size:11px;line-height:1.55;margin-top:18px}.auth-foot{font-size:10px;color:#73829d;text-align:center;margin-top:17px}
+.auth-password-wrap{position:relative}.auth-password-wrap .auth-input{padding-right:50px!important}.auth-eye{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:38px;height:38px;padding:8px;border:0;background:transparent;color:#a3b0c8;line-height:1}.auth-eye:hover{transform:translateY(-50%);color:#eef3ff}.auth-eye svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 @media(max-width:950px){.main-grid{grid-template-columns:1fr}.right-stack{display:grid;grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.app{padding:16px 12px 28px}.topbar{align-items:flex-start}.top-actions button{padding:8px}.welcome{align-items:flex-start;flex-direction:column}.datebox{width:100%}.datebox input{flex:1}.kpis{gap:9px}.card{padding:14px;border-radius:15px}.kpi-value{font-size:25px}.right-stack{display:flex}.add-row{grid-template-columns:1fr 1fr}.add-row input:first-child{grid-column:1/-1}.add-row button{grid-column:1/-1}.task{gap:8px;padding:11px}.task-actions{flex-direction:column}.cat-row{grid-template-columns:100px minmax(30px,1fr) 35px}.chart-wrap{height:220px}}
@@ -57,7 +58,7 @@ dialog{background:#121a2d;color:var(--text);border:1px solid var(--border);borde
 <div class="app" id="app">
   <header class="topbar">
     <div class="brand"><div class="logo">D</div><div><h1>Daymark</h1><p>Daily focus · steady progress</p></div></div>
-    <div class="top-actions"><button class="ghost" id="exportBtn" title="Export your activity data">↧ Export CSV</button><button id="themeBtn" aria-label="Toggle color theme">☼ Light mode</button><button id="lockBtn" title="Lock Daymark">♙ Lock</button></div>
+    <div class="top-actions"><button class="ghost" id="exportBtn" title="Export your activity data">↧ Export CSV</button><button class="ghost" id="usersBtn" hidden>Users</button><button id="themeBtn" aria-label="Toggle color theme">☼ Light mode</button><button id="lockBtn" title="Lock Daymark">♙ Lock</button></div>
   </header>
   <section class="welcome">
     <div><div class="eyebrow">YOUR PERSONAL WORKSPACE</div><h2>Make today count.</h2><p id="subtitle">A clear plan for your time, focus, and follow-through.</p></div>
@@ -116,20 +117,18 @@ dialog{background:#121a2d;color:var(--text);border:1px solid var(--border);borde
       <label class="auth-label" for="authUsername">Username</label>
       <input class="auth-input" id="authUsername" type="text" autocomplete="username" minlength="3" maxlength="24" required placeholder="Choose a username">
       <label class="auth-label" for="authPassword" id="passwordLabel">Create password</label>
-      <input class="auth-input" id="authPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters">
-      <div id="confirmWrap">
-        <label class="auth-label" for="authConfirm">Confirm password</label>
-        <input class="auth-input" id="authConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Enter password again">
-      </div>
+      <div class="auth-password-wrap"><input class="auth-input" id="authPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"><button class="auth-eye" type="button" id="togglePassword" aria-label="Show password" aria-pressed="false" title="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 5.1A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-4 4.8M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10 10 0 0 0 4-.8"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></button></div>
       <button class="auth-btn" type="submit" id="authSubmit">Create account & open Daymark →</button>
       <div class="auth-error" id="authError" role="status"></div>
     </form>
-    <div class="auth-warning"><strong>Local account, not server security.</strong> Each username has separate records in this browser. The password is hashed, but records are not encrypted and anyone with access to the HTML file or browser developer tools may bypass this screen. Accounts do not sync between devices.</div>
+    <button class="ghost" type="button" id="authModeToggle" style="width:100%;margin-top:8px">Need an account? Create one</button>
+    <div class="auth-warning"><strong>Local account server.</strong> Usernames and salted password hashes are stored in a SQLite database on the computer running Daymark. Tracker activity remains in this browser.</div>
     <div class="auth-foot">Existing Daymark records will be migrated to the first account where possible.</div>
   </div>
 </section>
 
 <dialog id="editDialog"><form id="editForm"><h3>Edit task</h3><p>Adjust the task details. Existing completion time is preserved unless you mark it incomplete.</p><div class="form-grid"><label class="full">Task name<input id="editTitle" maxlength="120" required></label><label>Category<select id="editCategory"><option>Study / Learning</option><option>Coding / Projects</option><option>Job Search</option><option>Personal Tasks</option><option>Exercise / Health</option><option>Sleep & Wake</option><option>Screen Time</option><option>Other</option></select></label><label>Planned minutes<input id="editMinutes" type="number" min="0" max="1440" step="5"></label><label>Planned end time (optional)<input id="editEnd" type="time"></label><label>Priority<select id="editPriority"><option>Medium</option><option>High</option><option>Low</option></select></label></div><div class="dialog-actions"><button type="button" id="cancelEdit">Cancel</button><button class="primary" type="submit">Save changes</button></div></form></dialog>
+<dialog id="usersDialog"><h3>Application users</h3><p>Accounts registered in the Daymark database.</p><div id="usersList" class="task-list"></div><div class="dialog-actions"><button type="button" id="closeUsers">Close</button></div></dialog>
 <div class="toast" id="toast" role="status"></div>
 <script>
 (function(){
@@ -218,45 +217,49 @@ render();
 
 <script>
 (function(){
-  const LEGACY_AUTH='daymark.auth.v1', USERS_KEY='daymark.accounts.v1', CURRENT='daymark.currentUser.v1', BYPASS='daymark.unlockOnce.v1';
-  const $=id=>document.getElementById(id), screen=$('authScreen'), form=$('authForm'), userInput=$('authUsername'), pass=$('authPassword'), confirm=$('authConfirm');
-  function readUsers(){try{return JSON.parse(localStorage.getItem(USERS_KEY))||{}}catch(e){return {}}}
-  function writeUsers(users){localStorage.setItem(USERS_KEY,JSON.stringify(users))}
+  const CURRENT='daymark.currentUser.v1';
+  const $=id=>document.getElementById(id), screen=$('authScreen'), form=$('authForm'), userInput=$('authUsername'), pass=$('authPassword');
   function normalizeUser(s){return String(s||'').trim().toLowerCase()}
   function validUser(s){return /^[a-z0-9._-]{3,24}$/.test(s)}
-  function migrateLegacyAuth(){
-    const users=readUsers();
-    if(!Object.keys(users).length){
-      try{
-        const old=JSON.parse(localStorage.getItem(LEGACY_AUTH)||'null');
-        if(old&&old.salt&&old.hash){users.owner={salt:old.salt,hash:old.hash,createdAt:Date.now()};writeUsers(users);if(!userInput.value)userInput.value='owner';}
-      }catch(e){}
-    }
-  }
-  migrateLegacyAuth();
-  function isExisting(){const name=normalizeUser(userInput.value);return !!readUsers()[name]}
+  let creating=true;
+  let currentUser=null;
   function paint(){
-    const existing=isExisting();
-    $('authEyebrow').textContent=existing?'PRIVATE WORKSPACE':'FIRST-TIME ACCOUNT SETUP';
-    $('authTitle').textContent=existing?'Welcome back.':'Create your account.';
-    $('authDesc').textContent=existing?'Sign in to open your own Daymark tasks and coding progress.':'Choose a username and password. Your activities will be stored separately from other usernames in this browser.';
-    $('passwordLabel').textContent=existing?'Password':'Create password';
-    pass.autocomplete=existing?'current-password':'new-password';
-    pass.placeholder=existing?'Enter your password':'At least 8 characters';
-    $('confirmWrap').hidden=existing;confirm.required=!existing;
-    $('authSubmit').textContent=existing?'Log in to Daymark →':'Create account & open Daymark →';
-    $('authError').textContent='';
+    $('authEyebrow').textContent=creating?'CREATE ACCOUNT':'PRIVATE WORKSPACE';
+    $('authTitle').textContent=creating?'Create your account.':'Welcome back.';
+    $('authDesc').textContent=creating?'Choose a username and password to create your account.':'Sign in with your username and password to open your Daymark workspace.';
+    $('passwordLabel').textContent=creating?'Create password':'Password';
+    pass.autocomplete=creating?'new-password':'current-password';
+    pass.placeholder=creating?'At least 8 characters':'Enter your password';
+    $('authSubmit').textContent=creating?'Create account & open Daymark →':'Log in to Daymark →';
+    $('authModeToggle').textContent=creating?'Already have an account? Log in':'Need an account? Create one';
   }
-  async function digest(password,salt){
-    if(!crypto.subtle)throw new Error('Password protection requires a recent browser with Web Crypto support. Try Chrome.');
-    const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveBits']);
-    const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(salt),iterations:250000,hash:'SHA-256'},key,256);
-    return Array.from(new Uint8Array(bits)).map(b=>b.toString(16).padStart(2,'0')).join('');
-  }
-  function randomSalt(){return Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('')}
-  function unlock(){screen.style.display='none';$('app').style.filter='none';pass.value='';confirm.value=''}
-  function openGate(){screen.style.display='grid';const last=localStorage.getItem(CURRENT)||'';userInput.value=last;paint();pass.value='';confirm.value='';$('authError').textContent='';setTimeout(()=>userInput.focus(),50)}
-  userInput.addEventListener('input',()=>{paint();});
+  function unlock(user){currentUser=user;localStorage.setItem(CURRENT,user.username);screen.style.display='none';$('app').style.filter='none';pass.value='';$('usersBtn').hidden=!user.isOwner}
+  async function openGate(){try{await fetch('/api/logout',{method:'POST'})}catch(e){}currentUser=null;localStorage.removeItem(CURRENT);screen.style.display='grid';paint();pass.value='';$('usersBtn').hidden=true;$('authError').textContent='';setTimeout(()=>userInput.focus(),50)}
+  userInput.addEventListener('input',()=>{paint();$('authError').textContent='';});
+  $('authModeToggle').addEventListener('click',()=>{creating=!creating;paint();pass.value='';$('authError').textContent='';userInput.focus()});
+  $('togglePassword').addEventListener('click',()=>{
+    const showing=pass.type==='text';
+    pass.type=showing?'password':'text';
+    $('togglePassword').innerHTML=showing?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 5.1A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-4 4.8M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10 10 0 0 0 4-.8"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    $('togglePassword').setAttribute('aria-label',showing?'Show password':'Hide password');
+    $('togglePassword').setAttribute('title',showing?'Show password':'Hide password');
+    $('togglePassword').setAttribute('aria-pressed',String(!showing));
+  });
+  $('usersBtn').addEventListener('click',()=>{
+    if(!currentUser?.isOwner)return;
+    fetch('/api/users').then(async response=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not load users.');return data.users}).then(users=>{
+      const list=$('usersList');list.innerHTML='';
+      users.forEach(account=>{
+      const row=document.createElement('div');row.className='task';
+      const title=document.createElement('div');title.className='task-title';title.textContent=account.username;
+      const meta=document.createElement('div');meta.className='task-meta';
+      const role=document.createElement('span');role.className='pill';role.textContent=account.isOwner?'Owner':'User';
+      const joined=document.createElement('span');joined.textContent='Joined '+new Date(account.createdAt).toLocaleDateString();
+      meta.append(role,joined);row.append(title,meta);list.appendChild(row);
+      });$('usersDialog').showModal();
+    }).catch(error=>{$('authError').textContent=error.message});
+  });
+  $('closeUsers').addEventListener('click',()=>$('usersDialog').close());
   $('lockBtn').addEventListener('click',openGate);
   form.addEventListener('submit',async e=>{
     e.preventDefault();
@@ -264,39 +267,19 @@ render();
     if(!validUser(username)){$('authError').textContent='Use 3–24 characters: letters, numbers, dots, underscores, or hyphens.';return}
     $('authSubmit').disabled=true;$('authSubmit').textContent='Checking…';$('authError').textContent='';
     try{
-      const users=readUsers(),existing=users[username];
-      if(existing){
-        const hash=await digest(password,existing.salt);
-        if(hash!==existing.hash)throw new Error('Incorrect password. Please try again.');
-      }else{
-        if(password.length<8)throw new Error('Use a password with at least 8 characters.');
-        if(password!==confirm.value)throw new Error('The passwords do not match.');
-        const salt=randomSalt(),hash=await digest(password,salt);
-        const isFirst=Object.keys(users).length===0;
-        users[username]={salt,hash,createdAt:Date.now()};writeUsers(users);
-        // Preserve legacy tasks for the first account only; do not copy one user's data to later accounts.
-        if(isFirst){
-          const oldTasks=localStorage.getItem('daymark.tasks.v1');
-          const newKey='daymark.tasks.user.'+username;
-          if(oldTasks&&!localStorage.getItem(newKey))localStorage.setItem(newKey,oldTasks);
-        }
-      }
-      // If an earlier Daymark password was migrated to the built-in owner account, carry its old task log forward.
-      const accountTaskKey='daymark.tasks.user.'+username;
-      const legacyTaskData=localStorage.getItem('daymark.tasks.v1');
-      if(!localStorage.getItem(accountTaskKey) && username==='owner' && legacyTaskData){
-        localStorage.setItem(accountTaskKey,legacyTaskData);
-      }
-      localStorage.setItem(CURRENT,username);
-      localStorage.setItem(BYPASS,'1');
-      location.reload();
+      if(creating&&password.length<8)throw new Error('Use a password with at least 8 characters.');
+      const response=await fetch(creating?'/api/signup':'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+      const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not verify account.');
+      unlock(data.user);
     }catch(err){$('authError').textContent=err.message||'Could not verify account.'}
     finally{$('authSubmit').disabled=false;paint()}
   });
-  // A one-time bypass lets the just-authenticated reload show the app; every later open asks for login.
-  const bypass=localStorage.getItem(BYPASS)==='1';
-  if(bypass){localStorage.removeItem(BYPASS);unlock()}
-  else{screen.style.display='grid';userInput.value=localStorage.getItem(CURRENT)||userInput.value;paint();setTimeout(()=>userInput.focus(),100)}
+  screen.style.display='grid';paint();
+  fetch('/api/me').then(response=>response.json()).then(data=>{
+    creating=!data.hasUsers;paint();
+    if(data.user)unlock(data.user);
+    else setTimeout(()=>userInput.focus(),100);
+  }).catch(()=>{$('authError').textContent='Could not connect to the account server. Start server.py and open http://127.0.0.1:8000.'});
 })();
 </script>
 
