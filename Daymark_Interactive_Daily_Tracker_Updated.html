@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daymark — Daily Activity Tracker</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2d;--panel2:#172239;--border:#27344f;--text:#eef3ff;--muted:#93a2bd;--accent:#8b9cff;--accent2:#55d6be;--good:#5bd6a2;--warn:#ffc66d;--danger:#ff8293;--shadow:0 16px 45px #0003}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#202a50 0,transparent 35%),var(--bg);color:var(--text);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--border);background:var(--panel2);color:var(--text);border-radius:11px;padding:10px 13px;transition:.18s}button:hover{border-color:var(--accent);transform:translateY(-1px)}button.primary{background:linear-gradient(135deg,#7d8cff,#6574e8);border:0;color:#fff;font-weight:700}button.ghost{background:transparent}button.small{padding:6px 9px;font-size:12px}
+input,select{background:#0d1527;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;min-width:0;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #8b9cff22}
+.app{max-width:1320px;margin:auto;padding:24px 22px 40px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px}.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#8b9cff,#55d6be);display:grid;place-items:center;color:#091020;font-weight:900;font-size:22px;box-shadow:0 8px 28px #7183ff35}.brand h1{font-size:20px;margin:0;letter-spacing:-.5px}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.top-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.welcome{display:flex;justify-content:space-between;align-items:end;gap:18px;margin:8px 0 20px}.eyebrow{color:var(--accent2);font-size:11px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase}.welcome h2{font-size:clamp(25px,3.4vw,37px);letter-spacing:-1.2px;margin:5px 0 4px}.welcome p{color:var(--muted);margin:0}.datebox{display:flex;align-items:center;gap:8px}.datebox input{min-width:150px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.card{background:linear-gradient(145deg,#151f35,#11192b);border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:var(--shadow);min-width:0}.kpi-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}.kpi-icon{width:31px;height:31px;border-radius:10px;background:#8b9cff18;color:var(--accent);display:grid;place-items:center;font-size:16px}.kpi-value{font-size:30px;font-weight:750;letter-spacing:-1px;margin:12px 0 2px}.kpi-sub{color:var(--muted);font-size:12px}.progress{height:7px;border-radius:9px;background:#28334a;overflow:hidden;margin-top:13px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:9px;transition:width .3s}
+.main-grid{display:grid;grid-template-columns:minmax(0,1.13fr) minmax(350px,.87fr);gap:18px;align-items:start}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.section-head h3{margin:0;font-size:17px;letter-spacing:-.3px}.section-head p{margin:4px 0 0;color:var(--muted);font-size:12px}.task-count{border-radius:20px;background:#8b9cff1a;color:#b5beff;padding:5px 9px;font-size:12px;font-weight:700}
+.task-filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 16px}.filter{padding:7px 10px;font-size:12px;color:var(--muted)}.filter.active{background:#8b9cff22;color:#dce1ff;border-color:#6878d9}
+.task-list{display:flex;flex-direction:column;gap:9px}.task{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:12px;align-items:start;padding:13px;border:1px solid var(--border);background:#0f1729;border-radius:13px;transition:.18s}.task.done{background:#10241f;border-color:#245b4a}.task input[type=checkbox]{appearance:none;width:21px;height:21px;border:1.5px solid #566784;border-radius:7px;padding:0;margin:2px 0 0;display:grid;place-items:center;cursor:pointer;background:#0b1220}.task input[type=checkbox]:checked{background:var(--good);border-color:var(--good)}.task input[type=checkbox]:checked:after{content:"✓";font-size:14px;color:#092017;font-weight:900}.task-title{font-weight:650;line-height:1.35;overflow-wrap:anywhere}.task.done .task-title{text-decoration:line-through;color:#a1b7ad}.task-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;color:var(--muted);font-size:11px}.pill{padding:3px 7px;border-radius:6px;background:#202b42;color:#b9c5dc}.pill.study{color:#b8c0ff;background:#292d51}.pill.work{color:#6de3cb;background:#183a3a}.pill.health{color:#8fe0a6;background:#193a2b}.pill.personal{color:#ffd18a;background:#3b3021}.task-time{font-size:10px;color:var(--good);margin-top:5px}.task-actions{display:flex;gap:5px}.task-actions button{padding:5px 7px;font-size:11px;color:var(--muted)}.empty{border:1px dashed #34415b;border-radius:14px;text-align:center;padding:32px 16px;color:var(--muted)}.empty strong{display:block;color:var(--text);margin-bottom:5px}
+.add-row{display:grid;grid-template-columns:minmax(0,1fr) 145px 95px auto;gap:8px;margin-top:14px}.add-row input{width:100%}
+.right-stack{display:flex;flex-direction:column;gap:18px}.chart-wrap{height:245px;position:relative}.chart-wrap canvas{width:100%;height:100%;display:block}.chart-legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:5px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+.category-list{display:flex;flex-direction:column;gap:12px}.cat-row{display:grid;grid-template-columns:115px minmax(40px,1fr) 38px;gap:10px;align-items:center;font-size:12px}.cat-name{color:#c5cee0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cat-track{height:7px;background:#28334a;border-radius:9px;overflow:hidden}.cat-track span{height:100%;display:block;border-radius:9px;background:linear-gradient(90deg,#8b9cff,#55d6be)}.cat-num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.footer-note{color:var(--muted);font-size:11px;margin-top:17px;display:flex;gap:7px;align-items:start}.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#e7fff5;color:#0b3426;padding:11px 16px;border-radius:12px;box-shadow:var(--shadow);font-weight:700;font-size:13px;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+dialog{background:#121a2d;color:var(--text);border:1px solid var(--border);border-radius:18px;padding:22px;width:min(460px,calc(100% - 30px));box-shadow:var(--shadow)}dialog::backdrop{background:#02040bcc;backdrop-filter:blur(5px)}dialog h3{margin:0 0 6px}dialog p{color:var(--muted);font-size:13px;margin:0 0 17px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-grid label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px}.form-grid .full{grid-column:1/-1}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.light{--bg:#f3f6fc;--panel:#fff;--panel2:#f7f9ff;--border:#dce3f1;--text:#1a2540;--muted:#66738c;--shadow:0 12px 30px #24395b12;background:radial-gradient(ellipse at 15% 0%,#dfe6ff 0,transparent 35%),var(--bg)}.light .card{background:linear-gradient(145deg,#fff,#f8faff)}.light .task{background:#fff}.light .task.done{background:#effaf4}.light input,.light select{background:#fff;color:var(--text)}.light .task input[type=checkbox]{background:#fff}.light .task input[type=checkbox]:checked{background:var(--good)}.light .pill{background:#edf1f9;color:#53617b}.light .filter.active{color:#3d4fba}.light .progress,.light .cat-track{background:#e6eaf3}.light .task.done .task-title{color:#547366}
+
+
+.coding-overview{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:10px;margin:15px 0}
+.coding-progress-card{border:1px solid var(--border);background:#0f1729;border-radius:12px;padding:12px}
+.coding-progress-head{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}.coding-progress-head strong{color:var(--text)}
+.coding-small{font-size:11px;color:var(--muted);margin-top:8px}
+.coding-toolbar{display:grid;grid-template-columns:1fr 220px 145px;gap:10px;align-items:center;margin:16px 0}
+.coding-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.coding-list{display:flex;flex-direction:column;gap:7px;max-height:570px;overflow:auto;padding-right:3px}
+.coding-item{display:grid;grid-template-columns:24px 32px minmax(0,1fr) auto;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--border);background:#0f1729;border-radius:11px}
+.coding-item.solved{background:#10241f;border-color:#245b4a}
+.coding-item input{appearance:none;width:20px;height:20px;border:1.5px solid #566784;border-radius:6px;padding:0;margin:0;display:grid;place-items:center;cursor:pointer;background:#0b1220}
+.coding-item input:checked{background:var(--good);border-color:var(--good)}.coding-item input:checked:after{content:"✓";font-size:14px;color:#092017;font-weight:900}
+.coding-number{font-size:11px;color:var(--muted);background:#202b42;border-radius:7px;padding:5px;text-align:center}
+.coding-title{font-size:13px;font-weight:650}.coding-item.solved .coding-title{text-decoration:line-through;color:#a1b7ad}
+.coding-meta{font-size:10px;color:var(--muted);margin-top:3px}.coding-done-time{font-size:10px;color:var(--good);white-space:nowrap}
+.light .coding-progress-card,.light .coding-item{background:#fff}.light .coding-item.solved{background:#effaf4}.light .coding-number{background:#edf1f9;color:#53617b}.light .coding-item input{background:#fff}.light .coding-item input:checked{background:var(--good)}
+@media(max-width:850px){.coding-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.coding-toolbar{grid-template-columns:1fr 1fr}.coding-tabs{grid-column:1/-1}}
+@media(max-width:520px){.coding-overview{gap:7px}.coding-toolbar{grid-template-columns:1fr}.coding-tabs{grid-column:auto}.coding-item{grid-template-columns:22px 26px minmax(0,1fr)}.coding-done-time{grid-column:3;white-space:normal}.coding-list{max-height:none}}
+
+/* Local password gate */
+.auth-screen{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at 15% 0%,#28345f 0,transparent 38%),#080d19;color:#eef3ff}
+.auth-card{width:min(430px,100%);padding:30px;border:1px solid #2b3855;border-radius:24px;background:linear-gradient(145deg,#151f35,#101727);box-shadow:0 28px 90px #0008}
+.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}.auth-logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#8b9cff,#55d6be);color:#091020;font-size:23px;font-weight:900}
+.auth-brand h1{font-size:21px;letter-spacing:-.5px;margin:0}.auth-brand p{margin:3px 0 0;color:#93a2bd;font-size:12px}
+.auth-eyebrow{color:#55d6be;text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:1.8px}.auth-card h2{font-size:25px;letter-spacing:-.7px;margin:8px 0}.auth-desc{font-size:13px;color:#a3b0c8;line-height:1.6;margin:0 0 22px}
+.auth-label{display:block;font-size:12px;color:#c2cce0;margin:14px 0 7px}.auth-input{display:block;width:100%;background:#0b1220!important;color:#eef3ff!important;border:1px solid #34425f!important;border-radius:11px;padding:12px 13px!important}.auth-btn{width:100%;margin-top:17px;padding:12px!important;border:0!important;border-radius:11px!important;background:linear-gradient(135deg,#8b9cff,#6979eb)!important;color:white!important;font-weight:750}.auth-error{min-height:18px;margin-top:11px;color:#ff9ca9;font-size:12px}.auth-warning{border:1px solid #51462f;background:#30291c;color:#e9d5a2;padding:11px 12px;border-radius:11px;font-size:11px;line-height:1.55;margin-top:18px}.auth-foot{font-size:10px;color:#73829d;text-align:center;margin-top:17px}
+
+@media(max-width:950px){.main-grid{grid-template-columns:1fr}.right-stack{display:grid;grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.app{padding:16px 12px 28px}.topbar{align-items:flex-start}.top-actions button{padding:8px}.welcome{align-items:flex-start;flex-direction:column}.datebox{width:100%}.datebox input{flex:1}.kpis{gap:9px}.card{padding:14px;border-radius:15px}.kpi-value{font-size:25px}.right-stack{display:flex}.add-row{grid-template-columns:1fr 1fr}.add-row input:first-child{grid-column:1/-1}.add-row button{grid-column:1/-1}.task{gap:8px;padding:11px}.task-actions{flex-direction:column}.cat-row{grid-template-columns:100px minmax(30px,1fr) 35px}.chart-wrap{height:220px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">D</div><div><h1>Daymark</h1><p>Daily focus · steady progress</p></div></div>
+    <div class="top-actions"><button class="ghost" id="exportBtn" title="Export your activity data">↧ Export CSV</button><button id="themeBtn" aria-label="Toggle color theme">☼ Light mode</button><button id="lockBtn" title="Lock Daymark">♙ Lock</button></div>
+  </header>
+  <section class="welcome">
+    <div><div class="eyebrow">YOUR PERSONAL WORKSPACE</div><h2>Make today count.</h2><p id="subtitle">A clear plan for your time, focus, and follow-through.</p></div>
+    <div class="datebox"><span style="color:var(--muted);font-size:12px">VIEW DAY</span><input type="date" id="selectedDate"><button class="small" id="todayBtn">Today</button></div>
+  </section>
+  <section class="kpis">
+    <div class="card"><div class="kpi-top"><span>Tasks completed</span><span class="kpi-icon">✓</span></div><div class="kpi-value" id="kpiDone">0/0</div><div class="kpi-sub" id="kpiDoneSub">No tasks planned yet</div><div class="progress"><span id="completionBar"></span></div></div>
+    <div class="card"><div class="kpi-top"><span>Completion rate</span><span class="kpi-icon">↗</span></div><div class="kpi-value" id="kpiRate">0%</div><div class="kpi-sub">Based on tasks for this day</div><div class="progress"><span id="rateBar"></span></div></div>
+    <div class="card"><div class="kpi-top"><span>Time tracked</span><span class="kpi-icon">◷</span></div><div class="kpi-value" id="kpiTime">0h 00m</div><div class="kpi-sub" id="kpiTimeSub">Time from completed tasks</div></div>
+    <div class="card"><div class="kpi-top"><span>On-time completions</span><span class="kpi-icon">⌁</span></div><div class="kpi-value" id="kpiOnTime">—</div><div class="kpi-sub">Completed by planned end time</div></div>
+  </section>
+  <main class="main-grid">
+    <section class="card">
+      <div class="section-head"><div><h3>Today's task list</h3><p>Tick a task when it is done. Completion time is captured automatically.</p></div><span class="task-count" id="taskCount">0 tasks</span></div>
+      <div class="task-filters" id="filters"><button class="filter active" data-filter="all">All tasks</button><button class="filter" data-filter="open">To do</button><button class="filter" data-filter="done">Completed</button></div>
+      <div class="task-list" id="taskList"></div>
+      <form class="add-row" id="addForm"><input id="newTask" placeholder="Add a task for this day…" maxlength="120" aria-label="New task" required><select id="newCategory" aria-label="Task category"><option>Study / Learning</option><option>Coding / Projects</option><option>Job Search</option><option>Personal Tasks</option><option>Exercise / Health</option><option>Sleep & Wake</option><option>Screen Time</option><option>Other</option></select><input id="newMinutes" type="number" min="0" max="1440" step="5" placeholder="Minutes" aria-label="Planned minutes"><button class="primary" type="submit">＋ Add task</button></form>
+      <div class="footer-note"><span>ⓘ</span><span>Completion timestamps are recorded at the moment you tick a task. Your data stays in this browser on this device; export CSV regularly for backup.</span></div>
+    </section>
+    <div class="right-stack">
+      <section class="card"><div class="section-head"><div><h3>Daily consistency</h3><p>Task completion over the last 7 days</p></div><span class="task-count">7 days</span></div><div class="chart-wrap"><canvas id="trendChart" aria-label="Daily completion graph"></canvas></div><div class="chart-legend"><span><i class="dot" style="background:#8b9cff"></i>Completion rate</span><span><i class="dot" style="background:#55d6be"></i>Tasks completed</span></div></section>
+      <section class="card"><div class="section-head"><div><h3>Time by category</h3><p>Estimated planned minutes for selected day</p></div></div><div class="category-list" id="categoryList"></div></section>
+      <section class="card"><div class="section-head"><div><h3>Completion timeline</h3><p>Actual time each task was checked off</p></div></div><div id="timeline" class="task-list"></div></section>
+    </div>
+  </main>
+
+  <section class="card coding-section" id="codingPractice" style="margin-top:18px">
+    <div class="section-head">
+      <div><div class="eyebrow">DAILY CODING HABIT</div><h3 style="margin-top:5px">Coding practice tracker</h3><p>45 interview questions · Tick a question after you solve it. Your completion time is recorded.</p></div>
+      <span class="task-count" id="codingTotal">0 / 45 solved</span>
+    </div>
+    <div class="coding-overview">
+      <div class="coding-progress-card"><div class="coding-progress-head"><span>Overall progress</span><strong id="codingPercent">0%</strong></div><div class="progress"><span id="codingProgressBar"></span></div><div class="coding-small" id="codingRemaining">45 questions remaining</div></div>
+      <div class="coding-progress-card"><div class="coding-progress-head"><span>Arrays</span><strong id="arrProgress">0 / 20</strong></div><div class="progress"><span id="arrBar"></span></div></div>
+      <div class="coding-progress-card"><div class="coding-progress-head"><span>Strings</span><strong id="strProgress">0 / 15</strong></div><div class="progress"><span id="strBar"></span></div></div>
+      <div class="coding-progress-card"><div class="coding-progress-head"><span>Linked lists</span><strong id="llProgress">0 / 10</strong></div><div class="progress"><span id="llBar"></span></div></div>
+    </div>
+    <div class="coding-toolbar">
+      <div class="coding-tabs" id="codingTabs"><button class="filter active" data-cgroup="Arrays">Arrays · 20</button><button class="filter" data-cgroup="Strings">Strings · 15</button><button class="filter" data-cgroup="Linked Lists">Linked lists · 10</button></div>
+      <input id="codingSearch" type="search" placeholder="Search questions…" aria-label="Search coding questions">
+      <select id="codingStatus" aria-label="Filter coding questions"><option value="all">All questions</option><option value="todo">Not solved</option><option value="done">Solved</option></select>
+    </div>
+    <div id="codingList" class="coding-list"></div>
+    <div class="footer-note"><span>ⓘ</span><span>Progress is saved separately for each local Daymark account in this browser. Question lists are based on common fresher-level interview practice; your completion history is yours to maintain.</span></div>
+  </section>
+
+</div>
+
+<section class="auth-screen" id="authScreen" aria-label="Daymark password screen">
+  <div class="auth-card">
+    <div class="auth-brand"><div class="auth-logo">D</div><div><h1>Daymark</h1><p>Daily focus · steady progress</p></div></div>
+    <div class="auth-eyebrow" id="authEyebrow">PRIVATE WORKSPACE</div>
+    <h2 id="authTitle">Welcome to Daymark.</h2>
+    <p class="auth-desc" id="authDesc">Create a local account or sign in to your own activity workspace.</p>
+    <form id="authForm">
+      <label class="auth-label" for="authUsername">Username</label>
+      <input class="auth-input" id="authUsername" type="text" autocomplete="username" minlength="3" maxlength="24" required placeholder="Choose a username">
+      <label class="auth-label" for="authPassword" id="passwordLabel">Create password</label>
+      <input class="auth-input" id="authPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters">
+      <div id="confirmWrap">
+        <label class="auth-label" for="authConfirm">Confirm password</label>
+        <input class="auth-input" id="authConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Enter password again">
+      </div>
+      <button class="auth-btn" type="submit" id="authSubmit">Create account & open Daymark →</button>
+      <div class="auth-error" id="authError" role="status"></div>
+    </form>
+    <div class="auth-warning"><strong>Local account, not server security.</strong> Each username has separate records in this browser. The password is hashed, but records are not encrypted and anyone with access to the HTML file or browser developer tools may bypass this screen. Accounts do not sync between devices.</div>
+    <div class="auth-foot">Existing Daymark records will be migrated to the first account where possible.</div>
+  </div>
+</section>
+
+<dialog id="editDialog"><form id="editForm"><h3>Edit task</h3><p>Adjust the task details. Existing completion time is preserved unless you mark it incomplete.</p><div class="form-grid"><label class="full">Task name<input id="editTitle" maxlength="120" required></label><label>Category<select id="editCategory"><option>Study / Learning</option><option>Coding / Projects</option><option>Job Search</option><option>Personal Tasks</option><option>Exercise / Health</option><option>Sleep & Wake</option><option>Screen Time</option><option>Other</option></select></label><label>Planned minutes<input id="editMinutes" type="number" min="0" max="1440" step="5"></label><label>Planned end time (optional)<input id="editEnd" type="time"></label><label>Priority<select id="editPriority"><option>Medium</option><option>High</option><option>Low</option></select></label></div><div class="dialog-actions"><button type="button" id="cancelEdit">Cancel</button><button class="primary" type="submit">Save changes</button></div></form></dialog>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(function(){
+const ACTIVE_USER=localStorage.getItem('daymark.currentUser.v1')||''; const KEY=ACTIVE_USER?('daymark.tasks.user.'+ACTIVE_USER):'daymark.tasks.v1', THEME='daymark.theme.v1';
+const cats=['Study / Learning','Coding / Projects','Job Search','Personal Tasks','Exercise / Health','Sleep & Wake','Screen Time','Other'];
+const icons={'Study / Learning':'▤','Coding / Projects':'⌘','Job Search':'↗','Personal Tasks':'◇','Exercise / Health':'♡','Sleep & Wake':'☾','Screen Time':'▣','Other':'✦'};
+const colors=['#8b9cff','#55d6be','#ffc66d','#ff8293','#9ee6a9','#bd9cff','#6cc7ff','#e6a5c8'];
+let tasks=load(), filter='all', editingId=null;
+const $=id=>document.getElementById(id);
+const localDate=(d=new Date())=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,10)};
+$('selectedDate').value=localDate();
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return []}}
+function save(){localStorage.setItem(KEY,JSON.stringify(tasks))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function dayTasks(day){return tasks.filter(t=>t.date===day)}
+function durationText(min){if(!min)return '0m';const h=Math.floor(min/60),m=min%60;return (h?h+'h ':'')+(m?m+'m':h?'':'0m')}
+function clock(ts){if(!ts)return '';return new Date(ts).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function catClass(c){if(c.startsWith('Study'))return 'study';if(c.startsWith('Coding')||c.startsWith('Job'))return 'work';if(c.startsWith('Exercise')||c.startsWith('Sleep'))return 'health';if(c.startsWith('Personal')||c.startsWith('Screen'))return 'personal';return ''}
+function notify(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function render(){
+ const day=$('selectedDate').value||localDate(), list=dayTasks(day), done=list.filter(t=>t.completedAt), planned=list.length, rate=planned?Math.round(done.length/planned*100):0;
+ const minutes=list.reduce((a,t)=>a+(Number(t.minutes)||0),0);
+ $('kpiDone').textContent=done.length+'/'+planned;$('kpiDoneSub').textContent=planned?`${planned-done.length} task${planned-done.length===1?'':'s'} remaining`:'Add your first task below';
+ $('kpiRate').textContent=rate+'%';$('completionBar').style.width=rate+'%';$('rateBar').style.width=rate+'%';
+ $('kpiTime').textContent=durationText(minutes);$('kpiTimeSub').textContent='Planned time across all tasks';
+ const ontime=list.filter(t=>t.completedAt&&t.endTime&&localDate(new Date(t.completedAt))===day&&new Date(t.completedAt).toTimeString().slice(0,5)<=t.endTime).length;
+ const withEnd=list.filter(t=>t.completedAt&&t.endTime).length;$('kpiOnTime').textContent=withEnd?Math.round(ontime/withEnd*100)+'%':'—';
+ $('taskCount').textContent=`${planned} task${planned===1?'':'s'}`;
+ const visible=list.filter(t=>filter==='all'||(filter==='open'&&!t.completedAt)||(filter==='done'&&t.completedAt));
+ $('taskList').innerHTML=visible.length?visible.map(t=>`<article class="task ${t.completedAt?'done':''}"><input type="checkbox" data-check="${t.id}" ${t.completedAt?'checked':''} aria-label="Mark ${escapeHtml(t.title)} complete"><div><div class="task-title">${escapeHtml(t.title)}</div><div class="task-meta"><span class="pill ${catClass(t.category)}">${icons[t.category]||'✦'} ${escapeHtml(t.category)}</span><span class="pill">${durationText(Number(t.minutes)||0)} planned</span><span class="pill">${escapeHtml(t.priority||'Medium')} priority</span></div>${t.completedAt?`<div class="task-time">✓ Completed at ${clock(t.completedAt)}${t.completedDate&&t.completedDate!==t.date?' · checked on another date':''}</div>`:''}</div><div class="task-actions"><button data-edit="${t.id}" aria-label="Edit task">Edit</button><button data-delete="${t.id}" aria-label="Delete task">×</button></div></article>`).join(''):`<div class="empty"><strong>${filter==='done'?'No completed tasks yet':filter==='open'?'All caught up!':'Your day starts here.'}</strong>${filter==='done'?'Check off a task when you finish it.':'Add the tasks you want to complete today using the field below.'}</div>`;
+ renderCategories(list);renderTimeline(list);drawChart();
+}
+function renderCategories(list){
+ const mins=cats.map(c=>({c,m:list.filter(t=>t.category===c).reduce((a,t)=>a+(Number(t.minutes)||0),0)})).filter(x=>x.m>0).sort((a,b)=>b.m-a.m);
+ const total=mins.reduce((a,x)=>a+x.m,0);
+ $('categoryList').innerHTML=mins.length?mins.map(x=>`<div class="cat-row"><span class="cat-name">${icons[x.c]||'✦'} ${escapeHtml(x.c)}</span><div class="cat-track"><span style="width:${Math.max(3,x.m/Math.max(...mins.map(y=>y.m))*100)}%;background:${colors[cats.indexOf(x.c)]}"></span></div><span class="cat-num">${durationText(x.m)}</span></div>`).join(''):`<div class="empty">Add planned minutes to see where your time goes.</div>`;
+}
+function renderTimeline(list){
+ const events=list.filter(t=>t.completedAt).sort((a,b)=>b.completedAt-a.completedAt);
+ $('timeline').innerHTML=events.length?events.map(t=>`<div class="task"><div class="kpi-icon" style="width:28px;height:28px">✓</div><div><div class="task-title">${escapeHtml(t.title)}</div><div class="task-meta">${escapeHtml(t.category)}</div></div><div style="font-size:11px;color:var(--good);white-space:nowrap">${clock(t.completedAt)}</div></div>`).join(''):`<div class="empty">Your check-off timestamps will appear here.</div>`;
+}
+function drawChart(){
+ const canvas=$('trendChart'),rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+ canvas.width=Math.max(1,rect.width*dpr);canvas.height=Math.max(1,rect.height*dpr);
+ const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);const w=rect.width,h=rect.height;
+ const style=getComputedStyle(document.body),muted=style.getPropertyValue('--muted').trim(),border=style.getPropertyValue('--border').trim();
+ const today=$('selectedDate').value||localDate(),dates=[];
+ for(let i=6;i>=0;i--){const dt=new Date(today+'T12:00:00');dt.setDate(dt.getDate()-i);dates.push(localDate(dt))}
+ const data=dates.map(d=>{const a=dayTasks(d);return {d,total:a.length,done:a.filter(t=>t.completedAt).length,rate:a.length?a.filter(t=>t.completedAt).length/a.length*100:0}});
+ const pad={l:29,r:10,t:18,b:28},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+ ctx.font='10px system-ui';ctx.strokeStyle=border;ctx.fillStyle=muted;ctx.lineWidth=1;
+ [0,50,100].forEach(v=>{const y=pad.t+ch-(v/100)*ch;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(v+'%',1,y+3)});
+ const step=cw/7,bw=Math.min(20,step*.42);
+ data.forEach((p,i)=>{const x=pad.l+step*i+step/2;const barH=ch*p.rate/100;ctx.fillStyle='#55d6be';ctx.globalAlpha=.7;ctx.beginPath();ctx.roundRect(x-bw/2,pad.t+ch-barH,bw,barH,4);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle=muted;ctx.textAlign='center';const label=new Date(p.d+'T12:00:00').toLocaleDateString([],{weekday:'short'});ctx.fillText(label,x,h-9);if(p.total){ctx.fillStyle=style.getPropertyValue('--text').trim();ctx.fillText(p.done+'/'+p.total,x,Math.max(10,pad.t+ch-barH-7));}});
+ ctx.beginPath();data.forEach((p,i)=>{const x=pad.l+step*i+step/2,y=pad.t+ch-ch*p.rate/100;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.strokeStyle='#8b9cff';ctx.lineWidth=2.5;ctx.stroke();
+ data.forEach((p,i)=>{const x=pad.l+step*i+step/2,y=pad.t+ch-ch*p.rate/100;ctx.beginPath();ctx.arc(x,y,3.3,0,Math.PI*2);ctx.fillStyle='#8b9cff';ctx.fill();});
+}
+$('addForm').addEventListener('submit',e=>{e.preventDefault();const title=$('newTask').value.trim();if(!title)return;tasks.push({id:uid(),date:$('selectedDate').value||localDate(),title,category:$('newCategory').value,minutes:Number($('newMinutes').value)||0,priority:'Medium',endTime:'',createdAt:Date.now(),completedAt:null});save();$('newTask').value='';$('newMinutes').value='';filter='all';document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));render();notify('Task added to your day')});
+$('taskList').addEventListener('change',e=>{const id=e.target.dataset.check;if(!id)return;const t=tasks.find(x=>x.id===id);if(!t)return;if(e.target.checked){t.completedAt=Date.now();t.completedDate=localDate();notify('Task completed · '+clock(t.completedAt))}else{t.completedAt=null;t.completedDate=null;notify('Task moved back to To do')}save();render()});
+$('taskList').addEventListener('click',e=>{const edit=e.target.dataset.edit,del=e.target.dataset.delete;if(edit){const t=tasks.find(x=>x.id===edit);if(!t)return;editingId=edit;$('editTitle').value=t.title;$('editCategory').value=t.category;$('editMinutes').value=t.minutes||'';$('editEnd').value=t.endTime||'';$('editPriority').value=t.priority||'Medium';$('editDialog').showModal()}if(del){const t=tasks.find(x=>x.id===del);if(t&&confirm(`Delete "${t.title}"?`)){tasks=tasks.filter(x=>x.id!==del);save();render();notify('Task deleted')}}});
+$('editForm').addEventListener('submit',e=>{e.preventDefault();const t=tasks.find(x=>x.id===editingId);if(t){t.title=$('editTitle').value.trim();t.category=$('editCategory').value;t.minutes=Number($('editMinutes').value)||0;t.endTime=$('editEnd').value;t.priority=$('editPriority').value;save();render();notify('Task updated')}$('editDialog').close()});
+$('cancelEdit').onclick=()=>$('editDialog').close();
+$('filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));render()});
+$('selectedDate').addEventListener('change',()=>{filter='all';document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));render()});
+$('todayBtn').onclick=()=>{$('selectedDate').value=localDate();filter='all';document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));render()};
+function setTheme(theme){document.body.classList.toggle('light',theme==='light');$('themeBtn').textContent=theme==='light'?'☾ Night mode':'☼ Light mode';localStorage.setItem(THEME,theme);drawChart()}
+$('themeBtn').onclick=()=>setTheme(document.body.classList.contains('light')?'dark':'light');
+if(localStorage.getItem(THEME)==='light')setTheme('light');
+$('exportBtn').onclick=()=>{const rows=[['Date','Task','Category','Planned minutes','Priority','Status','Completed at','Planned end time'],...tasks.map(t=>[t.date,t.title,t.category,t.minutes,t.priority,t.completedAt?'Completed':'To do',t.completedAt?new Date(t.completedAt).toISOString():'',t.endTime||''])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='daymark-activity.csv';a.click();URL.revokeObjectURL(a.href);notify('Activity CSV exported')};
+window.addEventListener('resize',drawChart);
+if(!tasks.length){
+ const day=localDate();
+ tasks=[
+ {id:uid(),date:day,title:'Study / learn a new concept',category:'Study / Learning',minutes:90,priority:'High',endTime:'10:00',createdAt:Date.now(),completedAt:null},
+ {id:uid(),date:day,title:'Work on a coding project',category:'Coding / Projects',minutes:90,priority:'High',endTime:'13:00',createdAt:Date.now(),completedAt:null},
+ {id:uid(),date:day,title:'Apply to 2 relevant jobs',category:'Job Search',minutes:45,priority:'High',endTime:'12:00',createdAt:Date.now(),completedAt:null},
+ {id:uid(),date:day,title:'Exercise or take a brisk walk',category:'Exercise / Health',minutes:30,priority:'Medium',endTime:'19:00',createdAt:Date.now(),completedAt:null},
+ {id:uid(),date:day,title:'Complete personal tasks',category:'Personal Tasks',minutes:30,priority:'Medium',endTime:'20:00',createdAt:Date.now(),completedAt:null},
+ {id:uid(),date:day,title:'Review screen time before bed',category:'Screen Time',minutes:15,priority:'Low',endTime:'22:00',createdAt:Date.now(),completedAt:null}
+ ];save();
+}
+render();
+})();
+</script>
+
+<script>
+(function(){
+  const LEGACY_AUTH='daymark.auth.v1', USERS_KEY='daymark.accounts.v1', CURRENT='daymark.currentUser.v1', BYPASS='daymark.unlockOnce.v1';
+  const $=id=>document.getElementById(id), screen=$('authScreen'), form=$('authForm'), userInput=$('authUsername'), pass=$('authPassword'), confirm=$('authConfirm');
+  function readUsers(){try{return JSON.parse(localStorage.getItem(USERS_KEY))||{}}catch(e){return {}}}
+  function writeUsers(users){localStorage.setItem(USERS_KEY,JSON.stringify(users))}
+  function normalizeUser(s){return String(s||'').trim().toLowerCase()}
+  function validUser(s){return /^[a-z0-9._-]{3,24}$/.test(s)}
+  function migrateLegacyAuth(){
+    const users=readUsers();
+    if(!Object.keys(users).length){
+      try{
+        const old=JSON.parse(localStorage.getItem(LEGACY_AUTH)||'null');
+        if(old&&old.salt&&old.hash){users.owner={salt:old.salt,hash:old.hash,createdAt:Date.now()};writeUsers(users);if(!userInput.value)userInput.value='owner';}
+      }catch(e){}
+    }
+  }
+  migrateLegacyAuth();
+  function isExisting(){const name=normalizeUser(userInput.value);return !!readUsers()[name]}
+  function paint(){
+    const existing=isExisting();
+    $('authEyebrow').textContent=existing?'PRIVATE WORKSPACE':'FIRST-TIME ACCOUNT SETUP';
+    $('authTitle').textContent=existing?'Welcome back.':'Create your account.';
+    $('authDesc').textContent=existing?'Sign in to open your own Daymark tasks and coding progress.':'Choose a username and password. Your activities will be stored separately from other usernames in this browser.';
+    $('passwordLabel').textContent=existing?'Password':'Create password';
+    pass.autocomplete=existing?'current-password':'new-password';
+    pass.placeholder=existing?'Enter your password':'At least 8 characters';
+    $('confirmWrap').hidden=existing;confirm.required=!existing;
+    $('authSubmit').textContent=existing?'Log in to Daymark →':'Create account & open Daymark →';
+    $('authError').textContent='';
+  }
+  async function digest(password,salt){
+    if(!crypto.subtle)throw new Error('Password protection requires a recent browser with Web Crypto support. Try Chrome.');
+    const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveBits']);
+    const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(salt),iterations:250000,hash:'SHA-256'},key,256);
+    return Array.from(new Uint8Array(bits)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  function randomSalt(){return Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('')}
+  function unlock(){screen.style.display='none';$('app').style.filter='none';pass.value='';confirm.value=''}
+  function openGate(){screen.style.display='grid';const last=localStorage.getItem(CURRENT)||'';userInput.value=last;paint();pass.value='';confirm.value='';$('authError').textContent='';setTimeout(()=>userInput.focus(),50)}
+  userInput.addEventListener('input',()=>{paint();});
+  $('lockBtn').addEventListener('click',openGate);
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const username=normalizeUser(userInput.value), password=pass.value;
+    if(!validUser(username)){$('authError').textContent='Use 3–24 characters: letters, numbers, dots, underscores, or hyphens.';return}
+    $('authSubmit').disabled=true;$('authSubmit').textContent='Checking…';$('authError').textContent='';
+    try{
+      const users=readUsers(),existing=users[username];
+      if(existing){
+        const hash=await digest(password,existing.salt);
+        if(hash!==existing.hash)throw new Error('Incorrect password. Please try again.');
+      }else{
+        if(password.length<8)throw new Error('Use a password with at least 8 characters.');
+        if(password!==confirm.value)throw new Error('The passwords do not match.');
+        const salt=randomSalt(),hash=await digest(password,salt);
+        const isFirst=Object.keys(users).length===0;
+        users[username]={salt,hash,createdAt:Date.now()};writeUsers(users);
+        // Preserve legacy tasks for the first account only; do not copy one user's data to later accounts.
+        if(isFirst){
+          const oldTasks=localStorage.getItem('daymark.tasks.v1');
+          const newKey='daymark.tasks.user.'+username;
+          if(oldTasks&&!localStorage.getItem(newKey))localStorage.setItem(newKey,oldTasks);
+        }
+      }
+      // If an earlier Daymark password was migrated to the built-in owner account, carry its old task log forward.
+      const accountTaskKey='daymark.tasks.user.'+username;
+      const legacyTaskData=localStorage.getItem('daymark.tasks.v1');
+      if(!localStorage.getItem(accountTaskKey) && username==='owner' && legacyTaskData){
+        localStorage.setItem(accountTaskKey,legacyTaskData);
+      }
+      localStorage.setItem(CURRENT,username);
+      localStorage.setItem(BYPASS,'1');
+      location.reload();
+    }catch(err){$('authError').textContent=err.message||'Could not verify account.'}
+    finally{$('authSubmit').disabled=false;paint()}
+  });
+  // A one-time bypass lets the just-authenticated reload show the app; every later open asks for login.
+  const bypass=localStorage.getItem(BYPASS)==='1';
+  if(bypass){localStorage.removeItem(BYPASS);unlock()}
+  else{screen.style.display='grid';userInput.value=localStorage.getItem(CURRENT)||userInput.value;paint();setTimeout(()=>userInput.focus(),100)}
+})();
+</script>
+
+
+<script>
+(function(){
+ const KEYBASE='daymark.coding.user.',user=localStorage.getItem('daymark.currentUser.v1')||'';
+ const STORE=KEYBASE+(user||'legacy');
+ const groups={
+ 'Arrays':[
+ 'Two Sum','Best Time to Buy and Sell Stock','Maximum Subarray','Move Zeroes','Contains Duplicate',
+ 'Product of Array Except Self','3Sum','Merge Intervals','Maximum Product Subarray','Container With Most Water',
+ 'Subarray Sum Equals K','Search in Rotated Sorted Array','Sort Colors','Next Permutation','First Missing Positive',
+ 'Trapping Rain Water','Longest Consecutive Sequence','Merge Sorted Array','Spiral Matrix','Maximum Sum Circular Subarray'
+ ],
+ 'Strings':[
+ 'Valid Anagram','Valid Palindrome','Valid Parentheses','Longest Substring Without Repeating Characters','Reverse Words in a String',
+ 'Group Anagrams','Longest Palindromic Substring','Longest Common Prefix','Implement strStr()','String to Integer (atoi)',
+ 'Find All Anagrams in a String','Minimum Window Substring','Permutation in String','Palindromic Substrings','Decode String'
+ ],
+ 'Linked Lists':[
+ 'Reverse Linked List','Linked List Cycle','Merge Two Sorted Lists','Remove Nth Node From End of List','Middle of the Linked List',
+ 'Palindrome Linked List','Intersection of Two Linked Lists','Add Two Numbers','Reorder List','Copy List with Random Pointer'
+ ]};
+ let active='Arrays', records=load();
+ function load(){try{return JSON.parse(localStorage.getItem(STORE))||{}}catch(e){return {}}}
+ function save(){localStorage.setItem(STORE,JSON.stringify(records))}
+ function id(group,index){return group+'-'+index}
+ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ function stamp(ts){return new Date(ts).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}
+ function render(){
+  const all=Object.values(groups).flat().length, solved=Object.values(groups).reduce((n,arr,g)=>n+arr.filter((_,i)=>records[id(Object.keys(groups)[g],i)]?.done).length,0);
+  document.getElementById('codingTotal').textContent=solved+' / '+all+' solved';
+  document.getElementById('codingPercent').textContent=Math.round(solved/all*100)+'%';
+  document.getElementById('codingProgressBar').style.width=(solved/all*100)+'%';
+  document.getElementById('codingRemaining').textContent=(all-solved)+' question'+(all-solved===1?'':'s')+' remaining';
+  [['Arrays','arrProgress','arrBar'],['Strings','strProgress','strBar'],['Linked Lists','llProgress','llBar']].forEach(([g,lab,bar])=>{
+    const n=groups[g].filter((_,i)=>records[id(g,i)]?.done).length;
+    document.getElementById(lab).textContent=n+' / '+groups[g].length;
+    document.getElementById(bar).style.width=(n/groups[g].length*100)+'%';
+  });
+  const query=document.getElementById('codingSearch').value.trim().toLowerCase(),status=document.getElementById('codingStatus').value;
+  const arr=groups[active].map((title,i)=>({title,i,rec:records[id(active,i)]||{}})).filter(x=>(!query||x.title.toLowerCase().includes(query))&&(status==='all'||(status==='done'&&x.rec.done)||(status==='todo'&&!x.rec.done)));
+  document.getElementById('codingList').innerHTML=arr.length?arr.map(x=>`<label class="coding-item ${x.rec.done?'solved':''}"><input type="checkbox" data-coding="${active}|${x.i}" ${x.rec.done?'checked':''} aria-label="Mark ${esc(x.title)} solved"><span class="coding-number">${x.i+1}</span><span><span class="coding-title">${esc(x.title)}</span><div class="coding-meta">${active}</div></span><span class="coding-done-time">${x.rec.done?'✓ Solved '+stamp(x.rec.completedAt):'Not solved'}</span></label>`).join(''):`<div class="empty"><strong>No matching questions</strong>Try another search or filter.</div>`;
+  document.querySelectorAll('[data-cgroup]').forEach(b=>b.classList.toggle('active',b.dataset.cgroup===active));
+ }
+ document.getElementById('codingTabs').addEventListener('click',e=>{const b=e.target.closest('[data-cgroup]');if(!b)return;active=b.dataset.cgroup;render()});
+ document.getElementById('codingList').addEventListener('change',e=>{
+  const value=e.target.dataset.coding;if(!value)return;const [group,index]=value.split('|'),key=id(group,Number(index));
+  if(e.target.checked)records[key]={done:true,completedAt:Date.now()};else delete records[key];
+  save();render();
+ });
+ document.getElementById('codingSearch').addEventListener('input',render);
+ document.getElementById('codingStatus').addEventListener('change',render);
+ render();
+})();
+</script>
+
+</body>
+</html>
